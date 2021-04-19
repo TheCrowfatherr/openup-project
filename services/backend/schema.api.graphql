@@ -1,0 +1,50 @@
+schema{
+    query: Query
+}
+
+type Query {
+    getAllProducts: [Product!]
+}
+
+type Product {
+    id:ID!
+    briefDescription: String!
+    category: String!
+    currentPrice: currentPrice!
+    description: description!
+    name: String!
+    nutriScore: String!
+    nutritionalValue: nutritionalValue!
+    status: String!
+}
+
+type currentPrice{
+    date: String!
+    discountAmount: Int!
+    discountEndDate: String!
+    discountPrice: Float!
+    regularPrice: Float!
+    store: String!
+}
+
+type description{
+    allergens: String
+    alcohol: String
+    additionalInformation: String
+    producer: String
+    expiryDate: String!
+    ingridients: String!
+    imports: String
+    countryOfOrigin: String
+    maintenance: String
+}
+
+type nutritionalValue{
+    carbs: Int
+    energy: String
+    fats: Int
+    proteins: Int
+    salt: Int
+    saturatedFats: Int
+    sugar: Int    
+}

@@ -8,15 +8,16 @@ package:
 plugins:
   - serverless-bundle # Package our functions with Webpack
   - serverless-offline
-  - serverless-dotenv-plugin # Load .env as environment variables
   - serverless-iam-roles-per-function
+  - serverless-appsync-plugin
 
 custom:
-  # Our stage is based on what is passed in when running serverless
-  # commands. Or falls back to what we have set in the provider section.
-  stage: ${opt:stage, self:provider.stage}
-  # Name of the SST app that's deploying our infrastructure
-  sstApp: ${self:custom.stage}-infrastructure
+  stage:
+    ${opt:stage, self:provider.stage}
+  sstApp: 
+    ${self:custom.stage}-infrastructure
+  appSync:
+    ${file(serverless.appsync-api.yml)}
 
 provider:
   name: aws

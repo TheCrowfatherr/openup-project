@@ -1,0 +1,19 @@
+name: ${self:service}-${self:provider.stage}
+schema: schema.api.graphql
+authenticationType: AMAZON_COGNITO_USER_POOLS
+userPoolConfig:
+  awsRegion: eu-central-1
+  defaultAction: ALLOW
+  userPoolId: !Ref CognitoUserPool
+mappingTemplates:
+  - type: Query
+    field: getAllProducts
+    dataSource: allProductsSource
+dataSources:
+  - type: AWS_LAMBDA
+    name: allProductsSource
+    config:
+      functionName: list
+
+    
+  

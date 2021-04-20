@@ -9,11 +9,46 @@ mappingTemplates:
   - type: Query
     field: getAllProducts
     dataSource: allProductsSource
+    request: false
+    response: false
+  - type: Query
+    field: getProduct
+    dataSource: productSource
+    request: false
+    response: false
+  - type: Mutation
+    field: createProduct
+    dataSource: createProductSource
+    request: false
+    response: false
+  - type: Mutation
+    field: updateProduct
+    dataSource: updateProductSource
+    request: false
+    response: false
+  - type: Mutation
+    field: deleteProduct
+    dataSource: deleteProductSource
+    request: false
+    response: false
 dataSources:
   - type: AWS_LAMBDA
     name: allProductsSource
     config:
       functionName: list
-
-    
-  
+  - type: AWS_LAMBDA
+    name: productSource
+    config:
+      functionName: get
+  - type: AWS_LAMBDA
+    name: createProductSource
+    config:
+      functionName: insert
+  - type: AWS_LAMBDA
+    name: updateProductSource
+    config:
+      functionName: update
+  - type: AWS_LAMBDA
+    name: deleteProductSource
+    config:
+      functionName: delete

@@ -1,5 +1,3 @@
-/* const fs = require("fs");
-const files = fs.readdirSync("products"); */ // folder products must be in the same directory as this file
 import * as uuid from "uuid";
 import constants from "./libs/fill-db-constants";
 import AWS from "aws-sdk";
@@ -30,11 +28,7 @@ function buildNutriValues(product) {
 function buildPrice(product) {
     // Form the price information
     let today = new Date();
-    let discountAmount,
-        discountStartDate,
-        discountEndDate,
-        discountPrice,
-        regularPrice;
+    let discountAmount, discountStartDate, discountEndDate, discountPrice, regularPrice;
     const sliceBackAmount = product.store.toLowerCase() === "voli" ? -1 : -2; // for removing the euro sign
 
     if ("discount_info" in product) {
@@ -53,7 +47,7 @@ function buildPrice(product) {
         regularPrice = product.price_info.current_price.slice(0, sliceBackAmount);
     }
     let price = {
-        date: formatDate(today),  // so the date format is consistent throughout the product
+        date: formatDate(today), // so the date format is consistent throughout the product
         discountAmount: discountAmount,
         discountStartDate: discountStartDate,
         discountEndDate: discountEndDate,
@@ -118,20 +112,16 @@ function formatDate(date) {
     // Format the date
     // https://stackoverflow.com/a/30272803
     let formatted =
-        ("0" + date.getDate()).slice(-2) + "." +
-        ("0" + (date.getMonth() + 1)).slice(-2) + "." +
-        date.getFullYear() + ".";
+        ("0" + date.getDate()).slice(-2) +
+        "." +
+        ("0" + (date.getMonth() + 1)).slice(-2) +
+        "." +
+        date.getFullYear() +
+        ".";
     return formatted;
 }
 
-// const path = __dirname + "\\products\\"; // this is where the JSON files live
-
-const performScan = async (params) => {
-    const result = await dynamoDB.scan(params).promise();
-    return result;
-};
-
-const getProducts = async (idList) => {
+const getProducts = async idList => {
     // Return old products whose productStoreID is in idList
     let filterExpression = "productStoreID IN (";
     let expressionAttributeValues = {};
@@ -150,18 +140,19 @@ const getProducts = async (idList) => {
     };
 
     let entireResult = []; // all of the old products
-    let result = await performScan(params);
-    result.Items.forEach((product) => entireResult.push(product));
+    let result = await dynamoDB.scan(params).promise();
+    result.Items.forEach(product => entireResult.push(product));
 
-    while (result.LastEvaluatedKey) { // while it's not undefined
+    while (result.LastEvaluatedKey) {
+        // while it's not undefined
         // continue scanning from the LastEvaluatedKey
         params["ExclusiveStartKey"] = result.LastEvaluatedKey;
-        result = await performScan(params);
-        result.Items.forEach((product) => entireResult.push(product));
+        result = await dynamoDB.scan(params).promise();
+        result.Items.forEach(product => entireResult.push(product));
     }
     console.log("The scan returned", entireResult.length, "'relevant' products");
     return entireResult;
-}
+};
 
 const returnOldProductWith = (productStoreID, oldProducts) => {
     if (oldProducts.length === 0) {
@@ -173,7 +164,7 @@ const returnOldProductWith = (productStoreID, oldProducts) => {
         }
     }
     return undefined;
-}
+};
 
 const merge = (oldProduct, newProduct) => {
     // I couldn't bother with deepmerge, it didn't want to cooperate
@@ -195,21 +186,19 @@ const merge = (oldProduct, newProduct) => {
                 //console.log("\t", subkey);
                 result[key][subkey] = newProduct[key][subkey];
             }
-        }
-        else {
+        } else {
             if (key === "id") {
                 result[key] = oldProduct[key];
-            }
-            else {
+            } else {
                 result[key] = newProduct[key];
             }
         }
     }
     //console.log("\n\nRESULT:", result);
     return result;
-}
+};
 
-export const writeProducts = async (products) => {
+export const writeProducts = async products => {
     let allParams = [];
     let idList = [];
 
@@ -266,48 +255,3 @@ export const writeProducts = async (products) => {
     const res = await dynamoDB.batchWrite(batch).promise();
     console.log("Any unprocessed items?", res.UnprocessedItems);
 };
-
-/* const main = async () => {
-    for (const file of files) {
-        const products = require(path + file); // get the array in the JSON file
-        let allParams = [];
-
-        for (const product of products) {
-            let productID = uuid.v4();
-            const storeNamespace = parseStore(product.store);
-            let params = {
-                PutRequest: {
-                    Item: {
-                        id: productID,
-                        name: product.name,
-                        category: product.category_name,
-                        briefDescription: product.brief_product_description || "",
-                        status: "published",
-                        nutriScore: "E",
-                        images: product.image_urls || [], // just in case
-                        // new
-                        store: product.store.toLowerCase(),
-                        storeID: storeNamespace, // returns the namespace of the store (acts as the ID)
-                        productStoreID: uuid.v5(product.product_id.toString(), storeNamespace), // for synchronizing changes later
-                        barcode: parseBarcode(product.barcodes),
-                        //
-                        description: buildDescription(product),
-                        nutritionalValues: buildNutriValues(product),
-                        currentPrice: buildPrice(product),
-                    },
-                },
-            };
-            allParams.push(params);
-        }
-        // added all the 25 products to the params list, now batch write
-        let batch = {
-            RequestItems: {},
-        };
-        batch.RequestItems[constants.productsTable] = allParams;
-        const res = await dynamoDB.batchWrite(batch).promise();
-        // I have to process the unprocessed items later on
-        console.log("Any unprocessed items?", res.UnprocessedItems);
-    }
-}; */
-
-// main().then((x) => console.log("All done!"));

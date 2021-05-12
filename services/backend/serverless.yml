@@ -130,7 +130,7 @@ functions:
           - dynamodb:PutItem
         Resource: !ImportValue '${self:custom.sstApp}-ProductHistoryTableArn'
 
-  idea-scraper:
+  ideaScraper:
     handler: functions/idea-scraper.main
     iamRoleStatements:
       - Effect: Allow

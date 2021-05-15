@@ -71,7 +71,6 @@ const ProductDetails = () => {
         key !== "energy" &&
         key !== "saturatedFats" &&
         key !== "sugar" &&
-        nutritionalValues[key] !== 0 &&
         nutritionalValues[key] !== ""
       ) {
         pieChartData.push({

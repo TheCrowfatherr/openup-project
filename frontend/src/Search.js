@@ -94,7 +94,7 @@ const Search = () => {
           nextClassName="paging "
           nextLinkClassName="outline-none"
           previousLinkClassName="outline-none"
-          activeClassName="paging bg-red-500"
+          activeClassName="bg-red-500"
           activeLinkClassName="outline-none"
           pageClassName="hidden sm:block paging"
           pageLinkClassName="outline-none"

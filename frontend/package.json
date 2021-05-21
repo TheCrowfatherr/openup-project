@@ -33,7 +33,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "prepare": "husky install",
+    "prepare": "cd .. && husky install frontend/husky",
     "format": "prettier -w ."
   },
   "eslintConfig": {
